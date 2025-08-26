@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="data:," />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes</title>
+    <style>
+      body { font-family: system-ui, Arial, sans-serif; margin: 0; }
+      .container { max-width: 960px; margin: 0 auto; padding: 16px; }
+      .topbar { display:flex; justify-content:space-between; align-items:center; padding: 12px 0; border-bottom:1px solid #eee;}
+      .btn { padding:8px 12px; border:1px solid #ccc; border-radius:8px; background:#fafafa; cursor:pointer;}
+      .btn.primary { background:#111; color:#fff; border-color:#111; }
+      input, textarea { width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; }
+      .grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap:12px; }
+      .card { border:1px solid #eee; border-radius:12px; padding:12px; }
+      .pill { display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid #ddd; margin-right:6px; font-size:12px;}
+      .row { display:flex; gap:8px; align-items:center;}
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
