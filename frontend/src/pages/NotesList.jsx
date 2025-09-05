@@ -11,40 +11,111 @@ export default function NotesList() {
 
   const [notes, setNotes] = useState([]);
   const [err, setErr] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");   // ✅ state for search
+  const [loading, setLoading] = useState(false);
 
-  async function loadNotes() {
+  async function loadNotes(q = "") {
     try {
       setLoading(true);
-      const data = await api.listNotes(token);
+      const data = await api.listNotes(token, q);
       setNotes(data.items);
-    } catch (e) {
+    } catch {
       setErr("⚠️ Failed to load notes");
     } finally {
       setLoading(false);
     }
   }
 
+  // load notes on mount and when search changes
   useEffect(() => {
-    loadNotes();
-  }, [token]);
+    const delay = setTimeout(() => {
+      loadNotes(search);
+    }, 400); // debounce typing
+    return () => clearTimeout(delay);
+  }, [search, token]);
 
-  async function handleDelete(id) {
-    if (!window.confirm("Are you sure you want to delete this note?")) return;
+  async function togglePin(note) {
     try {
-      await api.deleteNote(token, id);
-      setNotes(notes.filter((n) => n.id !== id));
+      const updated = await api.updateNote(token, note.id, {
+        ...note,
+        is_pinned: !note.is_pinned,
+      });
+      setNotes(notes.map((n) => (n.id === updated.id ? updated : n)));
     } catch {
-      alert("❌ Failed to delete note");
+      alert("Failed to update note");
     }
+  }
+
+  async function toggleArchive(note) {
+    try {
+      const updated = await api.updateNote(token, note.id, {
+        ...note,
+        is_archived: !note.is_archived,
+      });
+      setNotes(notes.map((n) => (n.id === updated.id ? updated : n)));
+    } catch {
+      alert("Failed to update note");
+    }
+  }
+
+  const pinned = notes.filter((n) => n.is_pinned && !n.is_archived);
+  const others = notes.filter((n) => !n.is_pinned && !n.is_archived);
+  const archived = notes.filter((n) => n.is_archived);
+
+  function renderSection(title, list) {
+    if (list.length === 0) return null;
+    return (
+      <div style={{ marginBottom: 24 }}>
+        <h3>{title}</h3>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+            gap: "16px",
+          }}
+        >
+          {list.map((n) => (
+            <div
+              key={n.id}
+              style={{
+                padding: "16px",
+                borderRadius: "10px",
+                background: "#fff",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+              }}
+            >
+              <h4
+                style={{ cursor: "pointer" }}
+                onClick={() => nav(`/notes/${n.id}`)}
+              >
+                {n.title || "(untitled)"}
+              </h4>
+              <p style={{ color: "#666" }}>
+                {n.content ? n.content.slice(0, 80) + "..." : ""}
+              </p>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button className="btn" onClick={() => togglePin(n)}>
+                  {n.is_pinned ? "Unpin" : "Pin"}
+                </button>
+                <button className="btn" onClick={() => toggleArchive(n)}>
+                  {n.is_archived ? "Unarchive" : "Archive"}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (
     <div style={{ maxWidth: 900, margin: "24px auto", padding: "0 16px" }}>
-      {/* Top bar actions */}
+      {/* Top bar with search + New Note */}
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
         <input
           placeholder="🔍 Search notes..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}   // ✅ search handler
           style={{
             flex: 1,
             padding: "10px 14px",
@@ -70,111 +141,12 @@ export default function NotesList() {
         </button>
       </div>
 
-      {err && <div style={{ color: "red", marginBottom: 12 }}>{err}</div>}
-      {loading && <p>Loading notes...</p>}
+      {loading && <p>Loading...</p>}
+      {err && <div style={{ color: "red" }}>{err}</div>}
 
-      {notes.length === 0 && !loading ? (
-        <p style={{ color: "#666", textAlign: "center" }}>No notes yet. Click <b>New Note</b> to get started!</p>
-      ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-            gap: "16px",
-          }}
-        >
-          {notes.map((n) => (
-            <div
-              key={n.id}
-              style={{
-                padding: "16px",
-                background: "#fff",
-                borderRadius: "10px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                transition: "all 0.2s ease-in-out",
-                cursor: "pointer",
-              }}
-              onClick={() => nav(`/notes/${n.id}`)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)")
-              }
-            >
-              <div style={{ flex: 1 }}>
-                <h3 style={{ margin: "0 0 8px", fontSize: "18px", color: "#333" }}>
-                  {n.title || "(Untitled)"}
-                </h3>
-                <p style={{ margin: "0 0 12px", color: "#555", fontSize: "14px" }}>
-                  {n.content ? n.content.slice(0, 100) + "..." : "No content"}
-                </p>
-                {n.tags?.length > 0 && (
-                  <div style={{ marginBottom: 8 }}>
-                    {n.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        style={{
-                          display: "inline-block",
-                          background: "#f1f3f5",
-                          color: "#555",
-                          fontSize: "12px",
-                          padding: "4px 8px",
-                          marginRight: "6px",
-                          borderRadius: "6px",
-                        }}
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Actions */}
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12 }}>
-                <button
-                  style={{
-                    flex: 1,
-                    padding: "6px",
-                    border: "none",
-                    background: "#eee",
-                    cursor: "pointer",
-                    borderRadius: "6px",
-                    marginRight: "6px",
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    nav(`/notes/${n.id}/edit`);
-                  }}
-                >
-                  ✏️ Edit
-                </button>
-                <button
-                  style={{
-                    flex: 1,
-                    padding: "6px",
-                    border: "none",
-                    background: "#ff4d4f",
-                    color: "#fff",
-                    cursor: "pointer",
-                    borderRadius: "6px",
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(n.id);
-                  }}
-                >
-                  🗑 Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      {renderSection("📌 Pinned", pinned)}
+      {renderSection("📝 Others", others)}
+      {renderSection("🗄 Archived", archived)}
     </div>
   );
 }

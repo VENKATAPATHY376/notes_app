@@ -1,10 +1,11 @@
-import { useNavigate, Routes, Route } from "react-router-dom";
+import { Outlet, useNavigate, Routes, Route } from "react-router-dom";
 import { useAuth } from "./context/AuthProvider.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import NotesList from "./pages/NotesList.jsx";
-import NoteEditor from "./pages/NoteEditor.jsx";
 import NoteDetail from "./pages/NoteDetail.jsx";
+import NoteEditor from "./pages/NoteEditor.jsx";
+import SplashScreen from "./pages/SplashScreen.jsx";
 
 export default function App() {
   const { user, logout } = useAuth();
@@ -12,6 +13,7 @@ export default function App() {
 
   return (
     <div className="container">
+      {/* Topbar */}
       <div className="topbar">
         <h2 style={{ margin: 0 }}>📝 Notes</h2>
         <div>
@@ -33,8 +35,11 @@ export default function App() {
         </div>
       </div>
 
-      {/* ✅ Only define routes here */}
+      {/* Routes */}
       <Routes>
+        {/* root shows splash screen */}
+        <Route path="/" element={<SplashScreen />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/notes" element={<NotesList />} />

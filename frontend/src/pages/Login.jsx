@@ -22,8 +22,8 @@ export default function Login() {
   return (
     <div style={styles.container}>
       <form style={styles.card} onSubmit={handleLogin}>
-        <h2 style={styles.title}>Welcome Back</h2>
-        <p style={styles.subtitle}>Please login to continue</p>
+        <h2 style={styles.title}>Welcome Back 👋</h2>
+        <p style={styles.subtitle}>Log in to continue to <b>Notes</b></p>
 
         <div style={styles.inputGroup}>
           <label style={styles.label}>Email</label>
@@ -56,7 +56,7 @@ export default function Login() {
         </button>
 
         <p style={styles.registerText}>
-          Don’t have an account?{" "}
+          Don’t have an account?
           <Link to="/register" style={styles.link}>
             Register
           </Link>
@@ -72,73 +72,80 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     minHeight: "100vh",
-    background: "#f5f7fa",
+    background: "linear-gradient(135deg, #f0f4ff 0%, #d9e8ff 100%)",
     padding: "1rem",
   },
   card: {
     background: "#fff",
     padding: "2.5rem",
-    borderRadius: "10px",
-    boxShadow: "0 6px 20px rgba(0,0,0,0.1)",
+    borderRadius: "12px",
+    boxShadow: "0 8px 30px rgba(0,0,0,0.08)",
     width: "100%",
     maxWidth: "400px",
     textAlign: "center",
+    animation: "fadeIn 0.6s ease",
   },
   title: {
-    marginBottom: "0.3rem",
-    fontSize: "1.8rem",
-    color: "#333",
+    marginBottom: "0.5rem",
+    fontSize: "2rem",
+    fontWeight: "700",
+    color: "#1a1a1a",
   },
   subtitle: {
-    marginBottom: "1.5rem",
+    marginBottom: "1.8rem",
     color: "#666",
-    fontSize: "0.95rem",
+    fontSize: "1rem",
   },
   inputGroup: {
     textAlign: "left",
-    marginBottom: "1.2rem",
+    marginBottom: "1.3rem",
   },
   label: {
     display: "block",
     fontWeight: 500,
     marginBottom: "0.4rem",
-    color: "#444",
+    color: "#333",
+    fontSize: "0.9rem",
   },
   input: {
     width: "100%",
     padding: "0.75rem",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
     outline: "none",
     fontSize: "0.95rem",
-    transition: "border 0.2s ease",
+    transition: "all 0.25s ease",
   },
   button: {
     width: "100%",
-    padding: "0.8rem",
-    background: "#4a90e2",
+    padding: "0.9rem",
+    background: "#0056d2",
     color: "white",
     border: "none",
-    borderRadius: "6px",
+    borderRadius: "8px",
     fontSize: "1rem",
     fontWeight: 600,
     cursor: "pointer",
-    transition: "background 0.2s ease",
-    marginTop: "0.5rem",
+    transition: "all 0.3s ease",
+    marginTop: "0.8rem",
   },
   error: {
+    background: "#ffe6e6",
     color: "#e74c3c",
+    padding: "0.6rem",
+    borderRadius: "6px",
     marginBottom: "1rem",
     fontSize: "0.9rem",
+    textAlign: "center",
   },
   registerText: {
-    marginTop: "1.2rem",
+    marginTop: "1.5rem",
     fontSize: "0.9rem",
     color: "#555",
   },
   link: {
-    color: "#4a90e2",
-    fontWeight: 500,
+    color: "#0056d2",
+    fontWeight: 600,
     textDecoration: "none",
     marginLeft: "4px",
   },

@@ -55,8 +55,8 @@ export const api = {
   createNote: (token, body) => jsonFetch("/notes", { method: "POST", body, token }),
   updateNote: (token, id, body) => jsonFetch(`/notes/${id}`, { method: "PUT", body, token }),
   getNote: (token, id) => jsonFetch(`/notes/${id}`, { method: "GET", token }),
-  listNotes: (token) =>
-    jsonFetch("/notes", {
+  listNotes: (token, search = "") =>
+    jsonFetch(`/notes?search=${encodeURIComponent(search)}`, {
       method: "GET",
       token,
     }),
