@@ -7,7 +7,7 @@ from app import models, schemas
 from app.security import hash_password, verify_password, create_token, decode_token
 from app.config import settings
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(tags=["auth"])
 
 REFRESH_COOKIE_NAME = "refresh_token"
 

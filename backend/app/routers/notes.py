@@ -8,7 +8,7 @@ from app.routers.auth import decode_token
 from fastapi import Header
 from sqlalchemy import func
 
-router = APIRouter(prefix="/notes", tags=["notes"])
+router = APIRouter(tags=["notes"])
 
 def get_user_id(authorization: str = Header(None)) -> str:
     if not authorization or not authorization.startswith("Bearer "):

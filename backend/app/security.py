@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 import jwt
+from jwt import ExpiredSignatureError, InvalidTokenError
+from fastapi import HTTPException
 from passlib.context import CryptContext
 from app.config import settings
 
@@ -16,4 +18,9 @@ def create_token(sub: str, expires_delta: timedelta) -> str:
     return jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
 
 def decode_token(token: str) -> dict:
-    return jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+    try:
+        return jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="token_expired")
+    except InvalidTokenError as e:
+        raise HTTPException(status_code=401, detail=f"invalid_token: {str(e)}")

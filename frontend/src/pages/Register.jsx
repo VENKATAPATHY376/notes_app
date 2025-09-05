@@ -2,28 +2,28 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../api/client";
 
-export default function Login() {
+export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const data = await api.login(email, password);
+      const data = await api.register(email, password);
       localStorage.setItem("access_token", data.access_token);
       navigate("/notes");
     } catch (e) {
-      setErr(e?.detail?.detail || "Login failed");
+      setErr(e?.detail?.detail || "Registration failed");
     }
   };
 
   return (
     <div style={styles.container}>
-      <form style={styles.card} onSubmit={handleLogin}>
-        <h2 style={styles.title}>Welcome Back</h2>
-        <p style={styles.subtitle}>Please login to continue</p>
+      <form style={styles.card} onSubmit={handleRegister}>
+        <h2 style={styles.title}>Create Account</h2>
+        <p style={styles.subtitle}>Sign up to get started</p>
 
         <div style={styles.inputGroup}>
           <label style={styles.label}>Email</label>
@@ -52,13 +52,13 @@ export default function Login() {
         {err && <p style={styles.error}>{err}</p>}
 
         <button type="submit" style={styles.button}>
-          Login
+          Register
         </button>
 
         <p style={styles.registerText}>
-          Don’t have an account?{" "}
-          <Link to="/register" style={styles.link}>
-            Register
+          Already have an account?{" "}
+          <Link to="/login" style={styles.link}>
+            Login
           </Link>
         </p>
       </form>
